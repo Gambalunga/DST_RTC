@@ -18,8 +18,9 @@
     The last Sunday of the month of March and October must always be on or after the 25th.
     In Australian States where DST is observed Summer Time begins on the first Sunday of October at 2:00 AM local time
     and ends on the first Sunday of April 2:00 AM at local time. DST is not observed in all States.
-    
-    Define US, EU or AU rules for DST. More countries could be added with different rules in DST_RTC.cpp
+    Note: Because we assume dst is false we only check for conditions in which dst is true.
+   
+    Define US, EU or AU rules for DST in the sketch. More countries could be added with different rules in DST_RTC.cpp
     char rulesDST[3] = "US";  // US DST rules
     char rulesDST[3] = "EU";  // EU DST rules
     char rulesDST[3] = "AU";  // AU DST rules
@@ -47,28 +48,29 @@ boolean DST_RTC::checkDST(DateTime RTCTime)
     //In the USA in March we are DST if the previous Sunday was on or after the 8th (and on or before the 14th).
     if (RTCTime.month() == 3)
     {
-      if (RTCTime.dayOfTheWeek() == 0) {  // if today is Sunday
-        if (RTCTime.day() >= 8    // on or after 8th
-            && RTCTime.day() <= 14     // but on or before 14th
-            && RTCTime.hour() >= 2)  // and at or after 2:00 AM
+      if (RTCTime.dayOfTheWeek() == 0)    // if today is Sunday
+      { 
+        if (RTCTime.day() >= 8            // on or after 8th
+            && RTCTime.day() <= 14        // but on or before 14th
+            && RTCTime.hour() >= 2)       // and at or after 2:00 AM
           dst = true;
-        else if (previousSunday >= 15)  // it is a Sunday after the second Sunday
+        else if (RTCTime.day() > 14)      // it is a Sunday after the second Sunday
           dst = true;
       }
-      else if (previousSunday >= 8) // it is not Sunday and we are after the change to DST
+      else if (previousSunday >= 8)       // it is not Sunday and we are after the change to DST
         dst = true;
     }
     //In November we must be before the first Sunday to be dst for USA.
     //In this case we are changing time at 2:00 AM so Sunday must be on or before the 7th.
-    if (RTCTime.month() == 11)   // November for the USA
+    if (RTCTime.month() == 11)             // November for the USA
     {
-      if (RTCTime.dayOfTheWeek() == 0)   // if today is Sunday
+      if (RTCTime.dayOfTheWeek() == 0)     // if today is Sunday
       {
-        if (RTCTime.day() <= 7  // and it is also the first Sunday
-            && RTCTime.hour() <= 1)  // less than 2:00 AM
+        if (RTCTime.day() <= 7             // and it is also the first Sunday
+            && RTCTime.hour() <= 1)        // less than 2:00 AM
           dst = true;
       }
-      else if (previousSunday <= 0)   // it is not yet the first Sunday and the previous Sunday was before Nov 1
+      else if (previousSunday <= 0)        // it is not yet the first Sunday and the previous Sunday was before Nov 1
         dst = true;
     }
   }
@@ -80,25 +82,28 @@ boolean DST_RTC::checkDST(DateTime RTCTime)
     //In Europe in March, we are DST if the Sunday was on or after the 25th.
     if (RTCTime.month() == 3)
     {
-      if (RTCTime.dayOfTheWeek() == 0)    // Today is Sunday
+      if (RTCTime.dayOfTheWeek() == 0)     // Today is Sunday
       {
-        if (RTCTime.day() >= 25  // and it is and it is the last Sunday of March
-            && RTCTime.hour() >= 2)  // 2:00 AM
+        if (RTCTime.day() >= 25            // and it is and it is the last Sunday of March
+            && RTCTime.hour() >= 2)        // 2:00 AM
           dst = true;
       }
-      else if (previousSunday >= 25) // if not Sunday and the last Sunday has passed
+      else if (previousSunday >= 25)       // if not Sunday and the last Sunday has passed
         dst = true;
     }
     //In October we must be before the last Sunday to be in DST for Europe.
     //That means the Sunday must be on or after the 25th.
-    if (RTCTime.month() == 10) // October for Europe
+    if (RTCTime.month() == 10)             // October for Europe
     {
-      if (RTCTime.dayOfTheWeek() == 0)   // if today is Sunday
-        if (RTCTime.day() >= 25  // and it is also on or after 25th
-            && RTCTime.hour() <= 1)  // less than 2:00 AM for Europe
+      if (RTCTime.dayOfTheWeek() == 0)     // if today is Sunday
+      {    
+        if (RTCTime.day() >= 25             // and it is also on or after 25th
+            && RTCTime.hour() <= 1)         // less than 2:00 AM for Europe
           dst = true;
-       else if // it is not yet the last Sunday
-      (previousSunday < 25)
+        else if (RTCTime.day() < 25)        // it is a Sunday but not yet the last Sunday
+          dst = true;
+      } 
+      else if (previousSunday < 25)         // it is not yet the last Sunday
         dst = true;
     }
   }
@@ -109,27 +114,29 @@ boolean DST_RTC::checkDST(DateTime RTCTime)
     if (RTCTime.month() > 10 || RTCTime.month() < 4) dst = true;  //DST is happening in Australia!
 
     //In Australia in October, we are DST if the Sunday was on or before the 7th.
-    if (RTCTime.month() == 10) {
-      if (RTCTime.dayOfTheWeek() == 0) {  // if today is Sunday
-        if (RTCTime.day() <= 7            // but on or before 7th it is the first Sunday
-            && RTCTime.hour() >= 2)       // and at or after 2:00 AM
+    if (RTCTime.month() == 10) 
+    {
+      if (RTCTime.dayOfTheWeek() == 0)      // if today is Sunday
+      { 
+        if (RTCTime.day() <= 7              // but on or before 7th it is the first Sunday
+            && RTCTime.hour() >= 2)         // and at or after 2:00 AM
           dst = true;
-        else if (RTCTime.day() >= 8)  // it is a Sunday after the first Sunday
+        else if (RTCTime.day() > 7)         // it is a Sunday after the first Sunday
           dst = true;
-      } else if (previousSunday >= 1)  // it is not Sunday and we are after the change to DST
+      } 
+      else if (previousSunday >= 1)         // it is not Sunday and we are after the change to DST
         dst = true;
     }
-
     //In April we must be before the first Sunday to be in DST for Australia.
     //That means the Sunday must be on or before the 7th.
-    if (RTCTime.month() == 4)  // April for Australia
+    if (RTCTime.month() == 4)              // April for Australia
     {
-      if (RTCTime.dayOfTheWeek() == 0)  // if today is Sunday
+      if (RTCTime.dayOfTheWeek() == 0)     // if today is Sunday
       {
-        if (RTCTime.day() <= 7      // and it is also the first Sunday
-            && RTCTime.hour() < 2)  // less than 2:00 AM
+        if (RTCTime.day() <= 7             // and it is also the first Sunday
+            && RTCTime.hour() < 2)         // less than 2:00 AM
           dst = true;
-      } else if (previousSunday <= 0)  // it is not yet the first Sunday and the previous Sunday was before Nov 1
+      } else if (previousSunday <= 0)      // it is not yet the first Sunday and the previous Sunday was before Nov 1
         dst = true;
     }
   }
@@ -139,7 +146,7 @@ boolean DST_RTC::checkDST(DateTime RTCTime)
 DateTime DST_RTC::calculateTime(DateTime RTCTime)
 {
   if (checkDST(RTCTime) == true) {
-    RTCTime = RTCTime.unixtime() + 3600; // add 1 hour or 3600 seconds to the time
+    RTCTime = RTCTime.unixtime() + 3600;     // add 1 hour or 3600 seconds to the time
   }
   return RTCTime;
 }
