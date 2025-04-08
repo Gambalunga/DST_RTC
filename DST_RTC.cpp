@@ -20,7 +20,6 @@
     and ends on the first Sunday of April 2:00 AM at local time. DST is not observed in all States.
     
     Define US, EU or AU rules for DST. More countries could be added with different rules in DST_RTC.cpp
-    char rulesDST[3] = "No";  // No DST rules
     char rulesDST[3] = "US";  // US DST rules
     char rulesDST[3] = "EU";  // EU DST rules
     char rulesDST[3] = "AU";  // AU DST rules
