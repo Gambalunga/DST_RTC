@@ -23,12 +23,15 @@ Addition Peter Bradley
 - For most of Europe DST usually begins on the last Sunday of March at 2:00 AM local time and ends on the last Sunday of October at 2:00 AM local time. The last Sunday of the month of March and October must always be on or after the 25th.
 -     In Australian States where DST is observed Summer Time begins on the first Sunday of October at 2:00 AM local time
     and ends on the first Sunday of April 2:00 AM at local time. DST is not observed in all States.
-    
-    Define US, EU or AU rules for DST. More countries could be added with different rules in DST_RTC.cpp
-    char rulesDST[3] = "US";  // US DST rules
-    char rulesDST[3] = "EU";  // EU DST rules
-    char rulesDST[3] = "AU";  // AU DST rules
 
+Define US, EU or AU rules for DST. More countries could be added with different rules in DST_RTC.cpp
+
+Insert one (or more) of the following variables in the sketch.
+```
+char rulesDST[3] = "US";  // US DST rules
+char rulesDST[3] = "EU";  // EU DST rules
+char rulesDST[3] = "AU";  // AU DST rules
+```
 ## Installation
 ### From the Library Manager
 1. Launch the Arduino IDE and navigate to *Sketch → Include Library → Manage Libraries*.
