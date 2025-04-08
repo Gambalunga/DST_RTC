@@ -2,7 +2,8 @@
 #include <Arduino.h>
 #include "RTClib.h"
 
-extern const char rulesDST[];
+// extern const char rulesDST[];
+extern char rulesDST[];
 
 class DST_RTC
 {
