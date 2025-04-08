@@ -13,8 +13,9 @@ RTC_DS1307 rtc; // clock object
 DST_RTC dst_rtc; // DST object
 
 // Define US or EU rules for DST comment out as required. More countries could be added with different rules in DST_RTC.cpp
-const char rulesDST[] = "US"; // US DST rules
-// const char rulesDST[] = "EU";   // EU DST rules
+char rulesDST[] = "US"; // US DST rules
+// char rulesDST[] = "EU";   // EU DST rules
+// char rulesDST[] = "AU";   // Australia DST rules
 
 void setup() {
   Serial.begin(115200);
@@ -26,7 +27,9 @@ void setup() {
   /*
     This line sets the RTC with an explicit date & time (standard time - not DST), for example to set
     March 28, 2020 at 23:58:5 you would call:
+  */
     // rtc.adjust(DateTime(2020, 3, 28, 23, 58, 5));
+  /*
     If used load the sketch a second time with this line commented out or the RTC will reset to
     this time on power up or reset.
   */
@@ -58,7 +61,7 @@ void loop() {
   Serial.println("time adjusted for Daylight Saving Time");
   printTheTime(theTime);
 
-  delay(1000); // 1 second
+  delay(10000); // 10 second
 }
 
 
