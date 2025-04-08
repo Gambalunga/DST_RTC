@@ -1,4 +1,3 @@
-
 #include <Wire.h>
 #include "RTClib.h"
 #include "DST_RTC.h"
@@ -9,6 +8,7 @@
 #endif
 
 RTC_DS1307 rtc; // clock object
+// RTC_PCF8523 rtc; // clock object
 
 DST_RTC dst_rtc; // DST object
 
