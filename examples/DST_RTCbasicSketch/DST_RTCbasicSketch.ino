@@ -12,10 +12,11 @@ RTC_DS1307 rtc; // clock object
 
 DST_RTC dst_rtc; // DST object
 
-// Define US or EU rules for DST comment out as required. More countries could be added with different rules in DST_RTC.cpp
-char rulesDST[] = "US"; // US DST rules
-// char rulesDST[] = "EU";   // EU DST rules
-// char rulesDST[] = "AU";   // Australia DST rules
+//  Define US, EU, WE or AU rules for DST in the sketch. More countries could be added with different rules in DST_RTC.cpp
+char rulesDST[3] = "US";  // USA DST rules
+// char rulesDST[3] = "EU";  // European DST rules
+// char rulesDST[3] = "WE";  // Western European DST rules
+// char rulesDST[3] = "AU";  // Australian DST rules
 
 void setup() {
   Serial.begin(115200);
