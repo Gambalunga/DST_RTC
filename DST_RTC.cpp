@@ -16,14 +16,17 @@
     For most of Europe DST usually begins on the last Sunday of March at 2:00 AM local time and ends on 
     the last Sunday of October at 2:00 AM local time.
     The last Sunday of the month of March and October must always be on or after the 25th.
+    For Western Europe (Great Britain, Ireland and Portugal the changes occur at 1:00 AM local time 
+    (Universal Time or Greenwich Mean Time).
     In Australian States where DST is observed Summer Time begins on the first Sunday of October at 2:00 AM local time
     and ends on the first Sunday of April 2:00 AM at local time. DST is not observed in all States.
     Note: Because we assume dst is false we only check for conditions in which dst is true.
    
-    Define US, EU or AU rules for DST in the sketch. More countries could be added with different rules in DST_RTC.cpp
-    char rulesDST[3] = "US";  // US DST rules
-    char rulesDST[3] = "EU";  // EU DST rules
-    char rulesDST[3] = "AU";  // AU DST rules
+    Define US, EU, WE or AU rules for DST in the sketch. More countries could be added with different rules in DST_RTC.cpp
+    char rulesDST[3] = "US";  // USA DST rules
+    char rulesDST[3] = "EU";  // European DST rules
+    char rulesDST[3] = "WE";  // Western European DST rules
+    char rulesDST[3] = "AU";  // Australian DST rules
 */
 
 #include "Arduino.h"
@@ -67,7 +70,7 @@ boolean DST_RTC::checkDST(DateTime RTCTime)
       if (RTCTime.dayOfTheWeek() == 0)     // if today is Sunday
       {
         if (RTCTime.day() <= 7             // and it is also the first Sunday
-            && RTCTime.hour() <= 1)        // less than 2:00 AM
+            && RTCTime.hour() < 2)        // less than 2:00 AM
           dst = true;
       }
       else if (previousSunday <= 0)        // it is not yet the first Sunday and the previous Sunday was before Nov 1
@@ -98,7 +101,40 @@ boolean DST_RTC::checkDST(DateTime RTCTime)
       if (RTCTime.dayOfTheWeek() == 0)     // if today is Sunday
       {    
         if (RTCTime.day() >= 25             // and it is also on or after 25th
-            && RTCTime.hour() <= 1)         // less than 2:00 AM for Europe
+            && RTCTime.hour() < 2)         // less than 2:00 AM for Europe
+          dst = true;
+        else if (RTCTime.day() < 25)        // it is a Sunday but not yet the last Sunday
+          dst = true;
+      } 
+      else if (previousSunday < 25)         // it is not yet the last Sunday
+        dst = true;
+    }
+  }
+
+  if (strcmp(rulesDST, "WE") == 0) {
+    // Serial.print("test of rulesDST: ");
+    // Serial.println(rulesDST);
+    if (RTCTime.month() > 3 && RTCTime.month() < 10) dst = true; //DST is happening in Western Europe!
+    //In Western Europe in March, we are DST if the Sunday was on or after the 25th.
+    if (RTCTime.month() == 3)
+    {
+      if (RTCTime.dayOfTheWeek() == 0)     // Today is Sunday
+      {
+        if (RTCTime.day() >= 25            // and it is the last Sunday of March
+            && RTCTime.hour() >= 1)        // 1:00 AM
+          dst = true;
+      }
+      else if (previousSunday >= 25)       // if not Sunday and the last Sunday has passed
+        dst = true;
+    }
+    //In October we must be before the last Sunday to be in DST for Western Europe.
+    //That means the Sunday must be on or after the 25th.
+    if (RTCTime.month() == 10)             // October for Europe
+    {
+      if (RTCTime.dayOfTheWeek() == 0)     // if today is Sunday
+      {    
+        if (RTCTime.day() >= 25             // and it is also on or after 25th
+            && RTCTime.hour() < 1)         // less than 1:00 AM for Western Europe
           dst = true;
         else if (RTCTime.day() < 25)        // it is a Sunday but not yet the last Sunday
           dst = true;
@@ -136,7 +172,8 @@ boolean DST_RTC::checkDST(DateTime RTCTime)
         if (RTCTime.day() <= 7             // and it is also the first Sunday
             && RTCTime.hour() < 2)         // less than 2:00 AM
           dst = true;
-      } else if (previousSunday <= 0)      // it is not yet the first Sunday and the previous Sunday was before Nov 1
+      } 
+      else if (previousSunday <= 0)      // it is not yet the first Sunday and the previous Sunday was before Nov 1
         dst = true;
     }
   }
